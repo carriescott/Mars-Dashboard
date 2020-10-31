@@ -1,8 +1,6 @@
 // import {set} from "immutable";
 
 let store = {
-    user: { name: "Student" },
-    apod: '',
     rover: '',
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
     selectedRover: 'Curiosity',
@@ -15,51 +13,23 @@ const root = document.getElementById('root');
 const updateStore = (store, newState) => {
     store = Object.assign(store, newState)
     render(root, store)
-}
+};
 
 const render = async (root, state) => {
     root.innerHTML = App(state)
-}
+};
 
-function selectRover(rover_name) {
-    console.log(rover_name);
-    updateStore(store, { selectedRover: rover_name});
-    // getRoverPhotos(store.rover.name, store.rover.max_date);
-}
-
-function Test(name) {
-    console.log(name);
+function selectRover(name) {
     updateStore(store, { selectedRover: name});
-    // const selected = document.getElementById(name);
-    // selected.classList.add('selected');
 }
-
-
-const Tab = (name, selectedRover) => {
-    return (`
-        <button id="${name}" onclick="Test(id)" class=${name === selectedRover ? 'selected' : ''}>
-        ${name}
-        </button>
-        `)
-};
-
-const RoverTabs = (rovers, selectedRover) => {
-    console.log('RoverTabs was called');
-    return (`
-     ${rovers.map((name) => {
-        return (`
-       ${Tab(name, selectedRover)}
-        `)
-    }).join("")}
-    `)
-};
 
 // create content
 const App = (state) => {
     let { rovers, selectedRover, rover, photos } = state;
-    console.log('app', selectedRover);
         return (`
         <header>
+        <h2>Welcome the the Nasa Mars Dashboard</h2>
+        <h4>Click on one of the rovers below to see it's mission details</h4>
         </header>
         <main>
             ${RoverTabs(rovers, selectedRover)}
@@ -76,19 +46,23 @@ window.addEventListener('load', () => {
 
 // ------------------------------------------------------  COMPONENTS
 
-// Pure function that renders conditional information -- THIS IS JUST AN EXAMPLE, you can delete it.
-const Greeting = (name) => {
-    if (name) {
-        return `
-            <h1>Welcome, ${name}!</h1>
-        `
-    }
-    return `
-        <h1>Hello!</h1>
-    `
-}
+const Tab = (name, selectedRover) => {
+    return (`
+        <button id="${name}" onclick="selectRover(id)" class=${name === selectedRover ? 'selected' : ''}>
+        ${name}
+        </button>
+        `)
+};
 
-
+const RoverTabs = (rovers, selectedRover) => {
+    return (`
+     ${rovers.map((name) => {
+        return (`
+       ${Tab(name, selectedRover)}
+        `)
+    }).join("")}
+    `)
+};
 
 // Example of a pure function that renders information requested from the backend
 const ImageOfTheDay = (apod) => {
@@ -116,13 +90,9 @@ const ImageOfTheDay = (apod) => {
     }
 };
 
-
-
 const RoverData = (selectedRover, rover, photos) => {
-    console.log('Rover Data was called', selectedRover);
     if(rover === '' || rover.name !== selectedRover) {
         getRover(selectedRover);
-        console.log('rover', rover);
         return (`
         <section class="loading-container">
         <h2>One second please just Loading some exciting data...</h2>
@@ -132,11 +102,9 @@ const RoverData = (selectedRover, rover, photos) => {
         return(`
         <section class="rover-information-container">
         <h2>${rover.name}</h2>
-        <p>${rover.landing_date}</p>
-        <p>${rover.launch_date}</p>
-        <p>${rover.status}</p>
-        <p>${rover.max_sol}</p>
-        <p>${rover.max_date}</p>
+        <p>Launched: ${rover.launch_date}</p>
+        <p>Landed: ${rover.landing_date}</p>
+        <p>Mission Status: ${rover.status}</p>
         </section>
         <section>
         <h2>Recent Photos</h2>
@@ -152,8 +120,7 @@ const RoverPhotos = (selectedRover, rover, photos) => {
         getRoverPhotos(selectedRover, rover.max_date);
         return (`
         <section class="photos-loading"></section>
-        `
-        );
+        `);
     } else {
         const latestPhotos =photos.slice(0,4);
         return(`
@@ -168,7 +135,8 @@ const PhotoList = (photos) => {
     return (`
     <section>
         ${photos.map(photo => (`
-      <img src="${photo.img_src}" height="350px" width="100%" />
+      <img src="${photo.img_src}" height="350px" width="100%">
+      <p>Date: ${photo.earth_date}</p>
             `)).join("")}
      </section>
     `)
@@ -196,7 +164,6 @@ const getRover = (rover_name) => {
 };
 
 const getRoverPhotos = (rover_name, max_date) => {
-    console.log(max_date);
     fetch(`http://localhost:3000/rover_photos/${rover_name}/${max_date}`)
         .then(res => res.json())
         .then(( {photos} ) => {

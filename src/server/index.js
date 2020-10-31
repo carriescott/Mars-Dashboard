@@ -34,7 +34,6 @@ app.get('/rovers/:rover_name', async (req, res) => {
          ${rover_ep}/manifests/${req.params.rover_name}?api_key=${process.env.API_KEY}
          `).then(res =>
                 res.json());
-        console.log('rover res', rover);
         res.send(rover);
     } catch (err) {
         console.log('error:', err);
@@ -42,12 +41,10 @@ app.get('/rovers/:rover_name', async (req, res) => {
 });
 
 app.get('/rover_photos/:rover_name/:max_date', async (req, res) => {
-    console.log('req', req);
     try {
         let rover_photos = await fetch(
             `${rover_ep}/rovers/${req.params.rover_name}/photos?earth_date=${req.params.max_date}&api_key=${process.env.API_KEY}
         `).then(res => res.json());
-        console.log('rover res', rover_photos);
         res.send(rover_photos)
     } catch (err) {
         console.log('error: ', err)
