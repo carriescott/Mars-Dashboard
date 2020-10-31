@@ -24,6 +24,12 @@ footer {
   background-color: blue;
 }
 
+.photos-loading {
+  height: 350px;
+  width: 50%;
+  background-color: lightgrey;
+}
+
 button {
   background-color: dodgerblue;
 }

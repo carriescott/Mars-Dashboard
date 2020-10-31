@@ -139,6 +139,7 @@ const RoverData = (selectedRover, rover, photos) => {
         <p>${rover.max_date}</p>
         </section>
         <section>
+        <h2>Recent Photos</h2>
         ${RoverPhotos(selectedRover, rover, photos)}
         </section>
     `);
@@ -149,11 +150,13 @@ const RoverData = (selectedRover, rover, photos) => {
 const RoverPhotos = (selectedRover, rover, photos) => {
     if(photos === '' || photos[0].rover.name !== selectedRover ) {
         getRoverPhotos(selectedRover, rover.max_date);
+        return (`
+        <section class="photos-loading"></section>
+        `
+        );
     } else {
         const latestPhotos =photos.slice(0,4);
-        console.log(latestPhotos);
         return(`
-        <h2>Recent Photos</h2>
         <section class="photo-container">
         ${PhotoList(latestPhotos)}
         </section>
@@ -162,7 +165,6 @@ const RoverPhotos = (selectedRover, rover, photos) => {
 };
 
 const PhotoList = (photos) => {
-    console.log('photoList', photos);
     return (`
     <section>
         ${photos.map(photo => (`
