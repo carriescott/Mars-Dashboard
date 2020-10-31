@@ -56,14 +56,14 @@ const RoverTabs = (rovers, selectedRover) => {
 
 // create content
 const App = (state) => {
-    let { rovers, selectedRover, roverInfo, rover } = state;
+    let { rovers, selectedRover, rover, photos } = state;
     console.log('app', selectedRover);
         return (`
         <header>
         </header>
         <main>
             ${RoverTabs(rovers, selectedRover)}
-            ${RoverData(selectedRover,rovers, roverInfo, rover)}
+            ${RoverData(selectedRover, rover, photos)}
         </main>
         <footer></footer>
     `)};
@@ -118,7 +118,7 @@ const ImageOfTheDay = (apod) => {
 
 
 
-const RoverData = (selectedRover, rovers, roverInfo, rover) => {
+const RoverData = (selectedRover, rover, photos) => {
     console.log('Rover Data was called', selectedRover);
     if(rover === '' || rover.name !== selectedRover) {
         getRover(selectedRover);
@@ -138,25 +138,40 @@ const RoverData = (selectedRover, rovers, roverInfo, rover) => {
         <p>${rover.max_sol}</p>
         <p>${rover.max_date}</p>
         </section>
+        <section>
+        ${RoverPhotos(selectedRover, rover, photos)}
+        </section>
     `);
     }
-
 };
 
 
 const RoverPhotos = (selectedRover, rover, photos) => {
-    console.log('hello');
-    if(photos === '') {
-        console.log(rover.max_date);
+    if(photos === '' || photos[0].rover.name !== selectedRover ) {
         getRoverPhotos(selectedRover, rover.max_date);
+    } else {
+        const latestPhotos =photos.slice(0,4);
+        console.log(latestPhotos);
+        return(`
+        <h2>Recent Photos</h2>
+        <section class="photo-container">
+        ${PhotoList(latestPhotos)}
+        </section>
+        `)
     }
-    return(` 
-        <p>${photos[0].id}</p>
-         <img src="${photos[0].img_src}" height="350px" width="100%" />
-        <p>${photos.length}</p>
-        <p>${photos[1].id}</p>
+};
+
+const PhotoList = (photos) => {
+    console.log('photoList', photos);
+    return (`
+    <section>
+        ${photos.map(photo => (`
+      <img src="${photo.img_src}" height="350px" width="100%" />
+            `)).join("")}
+     </section>
     `)
 };
+
 
 // ------------------------------------------------------  API CALLS
 
