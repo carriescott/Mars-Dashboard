@@ -6,7 +6,6 @@ let store = {
     rover: '',
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
     selectedRover: 'Curiosity',
-    roverInfo: {},
     photos: ''
 };
 
@@ -25,8 +24,7 @@ const render = async (root, state) => {
 function selectRover(rover_name) {
     console.log(rover_name);
     updateStore(store, { selectedRover: rover_name});
-    getRover(rover_name);
-    getRoverPhotos(store.rover.name, store.rover.max_date);
+    // getRoverPhotos(store.rover.name, store.rover.max_date);
 }
 
 function Test(name) {
@@ -38,10 +36,6 @@ function Test(name) {
 
 
 const Tab = (name, selectedRover) => {
-    if (name === selectedRover) {
-        console.log('selected test', name);
-    }
-
     return (`
         <button id="${name}" onclick="Test(id)" class=${name === selectedRover ? 'selected' : ''}>
         ${name}
@@ -50,6 +44,7 @@ const Tab = (name, selectedRover) => {
 };
 
 const RoverTabs = (rovers, selectedRover) => {
+    console.log('RoverTabs was called');
     return (`
      ${rovers.map((name) => {
         return (`
@@ -62,17 +57,17 @@ const RoverTabs = (rovers, selectedRover) => {
 // create content
 const App = (state) => {
     let { rovers, selectedRover, roverInfo, rover } = state;
-
-    return `
+    console.log('app', selectedRover);
+        return (`
         <header>
-            ${RoverTabs(rovers, selectedRover)}
         </header>
         <main>
+            ${RoverTabs(rovers, selectedRover)}
             ${RoverData(selectedRover,rovers, roverInfo, rover)}
         </main>
         <footer></footer>
-    `
-}
+    `)};
+
 
 // listening for load event because page should load before any JS is called
 window.addEventListener('load', () => {
@@ -124,19 +119,28 @@ const ImageOfTheDay = (apod) => {
 
 
 const RoverData = (selectedRover, rovers, roverInfo, rover) => {
-    console.log(selectedRover);
-    if(rover === '') {
+    console.log('Rover Data was called', selectedRover);
+    if(rover === '' || rover.name !== selectedRover) {
         getRover(selectedRover);
-    }
-    console.log('rover', rover);
-    return(` 
-        <h3>${rover.name}</h3>
+        console.log('rover', rover);
+        return (`
+        <section class="loading-container">
+        <h2>One second please just Loading some exciting data...</h2>
+        </section>
+    `);
+    } else {
+        return(`
+        <section class="rover-information-container">
+        <h2>${rover.name}</h2>
         <p>${rover.landing_date}</p>
         <p>${rover.launch_date}</p>
         <p>${rover.status}</p>
         <p>${rover.max_sol}</p>
         <p>${rover.max_date}</p>
-    `)
+        </section>
+    `);
+    }
+
 };
 
 
