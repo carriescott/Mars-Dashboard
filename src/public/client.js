@@ -1,5 +1,3 @@
-// import {set} from "immutable";
-
 let store = {
     rover: '',
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
@@ -7,7 +5,6 @@ let store = {
     photos: ''
 };
 
-// add our markup to the page
 const root = document.getElementById('root');
 
 const updateStore = (store, newState) => {
@@ -23,23 +20,21 @@ function selectRover(name) {
     updateStore(store, { selectedRover: name});
 }
 
-// create content
+// Build html content
 const App = (state) => {
     let { rovers, selectedRover, rover, photos } = state;
         return (`
-        <header>
+        <header class="dashboard-header">
         <h2>Welcome the the Nasa Mars Dashboard</h2>
-        <h4>Click on one of the rovers below to see it's mission details</h4>
+        <p>Click on one of the rovers below to see it's mission details</p>
         </header>
-        <main>
+        <main class="dashboard-main">
             ${RoverTabs(rovers, selectedRover)}
             ${RoverData(selectedRover, rover, photos)}
         </main>
         <footer></footer>
     `)};
 
-
-// listening for load event because page should load before any JS is called
 window.addEventListener('load', () => {
     render(root, store)
 })
@@ -48,7 +43,7 @@ window.addEventListener('load', () => {
 
 const Tab = (name, selectedRover) => {
     return (`
-        <button id="${name}" onclick="selectRover(id)" class=${name === selectedRover ? 'selected' : ''}>
+        <button id="${name}" onclick="selectRover(id)" class="${name === selectedRover ? 'selected' : 'rover-button'}">
         ${name}
         </button>
         `)
@@ -56,38 +51,15 @@ const Tab = (name, selectedRover) => {
 
 const RoverTabs = (rovers, selectedRover) => {
     return (`
-     ${rovers.map((name) => {
+    <section class="tabs-container">
+    ${rovers.map((name) => {
         return (`
        ${Tab(name, selectedRover)}
         `)
     }).join("")}
+    </section>
+     
     `)
-};
-
-// Example of a pure function that renders information requested from the backend
-const ImageOfTheDay = (apod) => {
-    // If image does not already exist, or it is not from today -- request it again
-    const today = new Date();
-    const photodate = new Date(apod.date);
-    console.log(photodate.getDate(), today.getDate());
-
-    console.log(photodate.getDate() === today.getDate());
-    if (!apod || apod.date === today.getDate() ) {
-        getImageOfTheDay(store)
-    }
-    // check if the photo of the day is actually type video!
-    if (apod.media_type === "video") {
-        return (`
-            <p>See today's featured video <a href="${apod.url}">here</a></p>
-            <p>${apod.title}</p>
-            <p>${apod.explanation}</p>
-        `)
-    } else {
-        return (`
-            <img src="${apod.image.url}" height="350px" width="100%" />
-            <p>${apod.image.explanation}</p>
-        `)
-    }
 };
 
 const RoverData = (selectedRover, rover, photos) => {
@@ -95,25 +67,24 @@ const RoverData = (selectedRover, rover, photos) => {
         getRover(selectedRover);
         return (`
         <section class="loading-container">
-        <h2>One second please just Loading some exciting data...</h2>
+        <h3>One second please, exciting data loading...</h3>
         </section>
     `);
     } else {
         return(`
         <section class="rover-information-container">
-        <h2>${rover.name}</h2>
+        <h2>Rover: ${rover.name}</h2>
         <p>Launched: ${rover.launch_date}</p>
         <p>Landed: ${rover.landing_date}</p>
         <p>Mission Status: ${rover.status}</p>
         </section>
-        <section>
-        <h2>Recent Photos</h2>
+        <section class="rover-photo-container">
+        <h3>Recent Photos</h3>
         ${RoverPhotos(selectedRover, rover, photos)}
         </section>
     `);
     }
 };
-
 
 const RoverPhotos = (selectedRover, rover, photos) => {
     if(photos === '' || photos[0].rover.name !== selectedRover ) {
@@ -124,7 +95,7 @@ const RoverPhotos = (selectedRover, rover, photos) => {
     } else {
         const latestPhotos =photos.slice(0,4);
         return(`
-        <section class="photo-container">
+        <section class="photo-list-container">
         ${PhotoList(latestPhotos)}
         </section>
         `)
@@ -133,10 +104,13 @@ const RoverPhotos = (selectedRover, rover, photos) => {
 
 const PhotoList = (photos) => {
     return (`
-    <section>
+    <section class="photo-container">
         ${photos.map(photo => (`
-      <img src="${photo.img_src}" height="350px" width="100%">
+      <div>
+      <img src="${photo.img_src}" class="rover-image">
       <p>Date: ${photo.earth_date}</p>
+      </div>  
+      
             `)).join("")}
      </section>
     `)
@@ -144,13 +118,6 @@ const PhotoList = (photos) => {
 
 
 // ------------------------------------------------------  API CALLS
-
-const getImageOfTheDay = (state) => {
-    let { apod } = state;
-    fetch(`http://localhost:3000/apod`)
-        .then(res => res.json())
-        .then(apod => updateStore(store, { apod }))
-};
 
 const getRover = (rover_name) => {
     fetch(`http://localhost:3000/rovers/${rover_name}`)
@@ -174,4 +141,3 @@ const getRoverPhotos = (rover_name, max_date) => {
                 }
             )})
 };
-

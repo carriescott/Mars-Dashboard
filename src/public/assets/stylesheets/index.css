@@ -20,8 +20,31 @@ footer {
   /* footer styles */
 }
 
-.selected {
-  background-color: blue;
+.tabs-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.rover-photo-container {
+  margin-top: 24px;
+}
+
+.dashboard-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.photo-list-container {
+  margin-top: 24px;
+}
+
+.loading-container {
+  margin: 24px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .photos-loading {
@@ -30,23 +53,105 @@ footer {
   background-color: lightgrey;
 }
 
-button {
-  background-color: dodgerblue;
+.rover-button {
+  color: lightcoral;
+  background-color: white;
 }
+
+.selected {
+  background-color: lightcoral;
+  color: white;
+}
+
+button {
+  height: 40px;
+  width: 100px;
+  border: solid 2px lightcoral;;
+  border-radius: 5px;
+  font-size: 14px;
+  margin-left: 24px;
+}
+
+
+/* -------------------  MOBILE  --------------------- */
+@media (max-width: 767px) {
+  .rover-image {
+    width: 40vh;
+  }
+  .photo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
 
 /* -------------------  TABLET  --------------------- */
 @media (min-width: 768px) {
-  /* use mobile */
+  .rover-image {
+   width: 60vh;
+  }
+  .photo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
 /* -------------------  DESKTOP  -------------------- */
 
 @media (min-width: 1224px) {
-  /* use mobile */
+  main {
+    flex: 1;
+    padding-right: 64px;
+    padding-left: 64px;
+  }
+  .rover-image {
+    width: 38vh;
+  }
+  .photo-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+}
+
+/* -------------------  MEDIUM SCREENS  -------------------- */
+
+@media (min-width: 1440px) {
+  main {
+    flex: 1;
+    padding-right: 64px;
+    padding-left: 64px;
+  }
+  .rover-image {
+    width: 45vh;
+  }
+  .photo-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
 }
 
 /* -------------------  LARGE SCREENS  -------------- */
 
 @media (min-width: 1824px) {
-  /* use mobile */
+
+  main {
+    flex: 1;
+    padding-right: 80px;
+    padding-left: 80px;
+  }
+  .rover-image {
+    width: 33vh;
+  }
+  .photo-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
 }
