@@ -87,6 +87,7 @@ button {
 
 
 /* -------------------  TABLET  --------------------- */
+
 @media (min-width: 768px) {
   .rover-image {
    width: 60vh;
