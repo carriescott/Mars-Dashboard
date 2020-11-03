@@ -70,6 +70,11 @@ const RoverData = (selectedRover, rover, roverPhotos) => {
         </section>
     `);
     } else {
+        return roverHTML(selectedRover, rover, roverPhotos);
+}
+};
+
+const roverHTML = (selectedRover, rover, roverPhotos) => {
     return(`
         <section class="rover-information-container">
         <h2>Rover: ${rover.name}</h2>
@@ -82,8 +87,8 @@ const RoverData = (selectedRover, rover, roverPhotos) => {
         ${RoverPhotos(selectedRover, rover, roverPhotos)}
         </section>
     `);
+
 }
-};
 
 const RoverPhotos = (selectedRover, rover, roverPhotos) => {
     if(roverPhotos === '' || roverPhotos[0].rover.name !== selectedRover ) {
@@ -92,17 +97,14 @@ const RoverPhotos = (selectedRover, rover, roverPhotos) => {
         <section class="photos-loading"></section>
         `);
     } else {
-        const latestPhotos = roverPhotos.slice(0,4);
-        return(`
-        <section class="photo-list-container">
-        ${PhotoList(latestPhotos)}
-        </section>
-        `)
+        const latestPhotos = roverPhotos.slice(0, 4);
+        return PhotoList(latestPhotos);
     }
 };
 
 const PhotoList = (photos) => {
     return (`
+ <section class="photo-list-container">
     <section class="photo-container">
         ${photos.map(photo => (`
       <div>
@@ -110,6 +112,7 @@ const PhotoList = (photos) => {
       <p>Date: ${photo.earth_date}</p>
       </div>  
             `)).join("")}
+     </section>
      </section>
     `)
 };
