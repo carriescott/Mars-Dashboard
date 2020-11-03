@@ -1,19 +1,19 @@
-let store = {
+let store = Immutable.Map({
     rover: '',
-    rovers: ['Curiosity', 'Opportunity', 'Spirit'],
+    rovers: Immutable.List( ['Curiosity', 'Opportunity', 'Spirit']),
     selectedRover: 'Curiosity',
-    photos: ''
-};
+    roverPhotos: ''
+});
 
 const root = document.getElementById('root');
 
-const updateStore = (store, newState) => {
-    store = Object.assign(store, newState)
+const updateStore = (state, newState) => {
+    store = state.merge(newState);
     render(root, store)
 };
 
-const render = async (root, state) => {
-    root.innerHTML = App(state)
+const render = async (root) => {
+    root.innerHTML = App()
 };
 
 function selectRover(name) {
@@ -21,16 +21,15 @@ function selectRover(name) {
 }
 
 // Build html content
-const App = (state) => {
-    let { rovers, selectedRover, rover, photos } = state;
+const App = () => {
         return (`
         <header class="dashboard-header">
         <h2>Welcome the the Nasa Mars Dashboard</h2>
         <p>Click on one of the rovers below to see it's mission details</p>
         </header>
         <main class="dashboard-main">
-            ${RoverTabs(rovers, selectedRover)}
-            ${RoverData(selectedRover, rover, photos)}
+            ${RoverTabs(store.get('rovers'), store.get('selectedRover'))}
+            ${RoverData(store.get('selectedRover'), store.get('rover'), store.get('roverPhotos'))}
         </main>
         <footer></footer>
     `)};
@@ -62,7 +61,7 @@ const RoverTabs = (rovers, selectedRover) => {
     `)
 };
 
-const RoverData = (selectedRover, rover, photos) => {
+const RoverData = (selectedRover, rover, roverPhotos) => {
     if(rover === '' || rover.name !== selectedRover) {
         getRover(selectedRover);
         return (`
@@ -71,7 +70,7 @@ const RoverData = (selectedRover, rover, photos) => {
         </section>
     `);
     } else {
-        return(`
+    return(`
         <section class="rover-information-container">
         <h2>Rover: ${rover.name}</h2>
         <p>Launched: ${rover.launch_date}</p>
@@ -80,20 +79,20 @@ const RoverData = (selectedRover, rover, photos) => {
         </section>
         <section class="rover-photo-container">
         <h3>Recent Photos</h3>
-        ${RoverPhotos(selectedRover, rover, photos)}
+        ${RoverPhotos(selectedRover, rover, roverPhotos)}
         </section>
     `);
-    }
+}
 };
 
-const RoverPhotos = (selectedRover, rover, photos) => {
-    if(photos === '' || photos[0].rover.name !== selectedRover ) {
+const RoverPhotos = (selectedRover, rover, roverPhotos) => {
+    if(roverPhotos === '' || roverPhotos[0].rover.name !== selectedRover ) {
         getRoverPhotos(selectedRover, rover.max_date);
         return (`
         <section class="photos-loading"></section>
         `);
     } else {
-        const latestPhotos =photos.slice(0,4);
+        const latestPhotos = roverPhotos.slice(0,4);
         return(`
         <section class="photo-list-container">
         ${PhotoList(latestPhotos)}
@@ -110,7 +109,6 @@ const PhotoList = (photos) => {
       <img src="${photo.img_src}" class="rover-image">
       <p>Date: ${photo.earth_date}</p>
       </div>  
-      
             `)).join("")}
      </section>
     `)
@@ -122,11 +120,10 @@ const PhotoList = (photos) => {
 const getRover = (rover_name) => {
     fetch(`http://localhost:3000/rovers/${rover_name}`)
         .then(res => res.json())
-        .then(({ photo_manifest })=> updateStore(store, {
-            rover: {
-                ...photo_manifest
+        .then(({ photo_manifest })=> {
+            const rover = photo_manifest;
+            updateStore(store, Immutable.Map({rover}));
             }
-        })
         )
 };
 
@@ -134,10 +131,9 @@ const getRoverPhotos = (rover_name, max_date) => {
     fetch(`http://localhost:3000/rover_photos/${rover_name}/${max_date}`)
         .then(res => res.json())
         .then(( {photos} ) => {
-            updateStore(store, {
-                    photos: [
-                        ...photos,
-                    ]
-                }
-            )})
+            const roverPhotos = photos;
+            updateStore(store, Immutable.Map({roverPhotos}));
+        })
 };
+
+
